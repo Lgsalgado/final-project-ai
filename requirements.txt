@@ -17,3 +17,6 @@ uvicorn[standard]>=0.28.0,<1.0.0
 
 tqdm>=4.66.0
 python-multipart>=0.0.9
+
+pytest>=7.4.0
+httpx>=0.25.0

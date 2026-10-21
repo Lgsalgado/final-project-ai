@@ -228,6 +228,8 @@ async def predict_video(
             probs_matrix = torch.softmax(logits_matrix, dim=1).cpu().numpy()
 
         preds_array = np.argmax(probs_matrix, axis=1)
+        # Quitar la categoria 'Profundidad Insuficiente' (clase 3) mapeandola a Tecnica Correcta
+        preds_array[preds_array == 3] = 0
 
         depths = [f['squat_depth_deg'] for _, f in frames_data]
         crit_idx = int(np.argmin(depths))
@@ -250,21 +252,14 @@ async def predict_video(
         active_preds = preds_array[active_indices]
         total_active = len(active_indices)
         class_counts = {c: int(np.sum(active_preds == c)) for c in range(4)}
+        # Solo se reportan las clases activas (excluyendo Profundidad Insuficiente)
         class_distribution = {
             CLASS_NAMES[c]: round(float(class_counts[c] / total_active) * 100.0, 1)
-            for c in range(4)
+            for c in [0, 1, 2]
         }
 
         flaws: List[str] = []
         recommendations: List[str] = []
-
-        if min_knee > 105.0:
-            flaws.append(
-                f"Profundidad insuficiente: la flexión máxima de rodilla fue de {round(min_knee, 1)}° (no alcanzó el paralelo de 90°-100°)."
-            )
-            recommendations.append(
-                "Desciende más profundo hasta que las caderas se ubiquen al nivel o por debajo de la parte superior de las rodillas."
-            )
 
         valgus_in_active = float(class_counts[1] / total_active)
         if (crit_class_id == 1 and crit_feats['valgus_coeff'] >= 0.15) or valgus_in_active >= 0.30:
@@ -292,19 +287,41 @@ async def predict_video(
                 "Distribuye el peso simétricamente entre ambas piernas y verifica la colocación equitativa de los pies."
             )
 
-        is_correct = len(flaws) == 0
+        # 1. El veredicto principal se basa primordialmente en la clasificacion del
+        # cuadro de maxima flexion (cuadro critico / inflexion del squat)
+        overall_class_id = crit_class_id
+
+        # 2. Alternativa de validacion: usar la clase mayoritaria durante la fase activa
+        # si el punto critico es 0 pero un defecto predomino consistentemente
+        majority_active_class = int(max(range(4), key=lambda c: class_counts[c]))
+        if crit_class_id == 0:
+            if majority_active_class != 0 and (class_counts[majority_active_class] / total_active) >= 0.35:
+                overall_class_id = majority_active_class
+            elif valgus_in_active >= 0.30:
+                overall_class_id = 1
+            elif butt_wink_in_active >= 0.35:
+                overall_class_id = 2
+
+        # 4. Regla biomecanica: Si min_knee <= 90.0, el atleta rompio el paralelo;
+        # bajo ninguna circunstancia el diagnostico global puede ser "Profundidad Insuficiente" (clase 3)
+        if min_knee <= 90.0 and overall_class_id == 3:
+            if crit_class_id != 3:
+                overall_class_id = crit_class_id
+            elif majority_active_class != 3:
+                overall_class_id = majority_active_class
+            else:
+                overall_class_id = 0
+
+        # 3. is_correct solo debe ser true si la clase en el punto critico es 0 ("Tecnica Correcta") y overall_class_id == 0
+        is_correct = (crit_class_id == 0 and overall_class_id == 0)
+
+        overall_posture = CLASS_NAMES[overall_class_id]
 
         if is_correct:
-            overall_class_id = 0
-            overall_posture = CLASS_NAMES[0]
-            recommendations.append("¡Excelente ejecución biomecánica! Mantén el control de tempo y la estabilidad articular.")
-        else:
-            if crit_class_id != 0:
-                overall_class_id = crit_class_id
+            if not flaws:
+                recommendations.append("¡Excelente ejecución biomecánica! Mantén el control de tempo y la estabilidad articular.")
             else:
-                defect_counts = {c: class_counts[c] for c in [1, 2, 3]}
-                overall_class_id = max(defect_counts, key=defect_counts.get)
-            overall_posture = CLASS_NAMES[overall_class_id]
+                recommendations.append("Técnica general válida. Revisa las observaciones detectadas para optimizar la ejecución.")
 
         return VideoAnalysisOutput(
             is_correct=is_correct,
