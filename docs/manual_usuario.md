@@ -247,29 +247,37 @@ La aplicación se abrirá automáticamente en tu navegador web predeterminado en
 
 ### 7.2 Funcionalidades y Pestañas Principales
 
-1. **📹 Pestaña 1: Análisis de Video**
+1. **🔴 Pestaña 1: Cámara en Vivo**
+   - **Supervisión Continua en Tiempo Real:** Captura el flujo de la cámara web local y procesa cada cuadro con MediaPipe BlazePose 3D y la red neuronal PyTorch en Edge AI.
+   - **Superposición de Esqueleto (HUD):** Dibuja sobre la imagen el esqueleto articular y destaca en verde (técnica correcta) o en rojo/naranja (valgo de rodilla o cifosis lumbar).
+   - **Conteo Automático de Repeticiones:** Detecta la transición del descenso al paralelo y ascenso, registrando repeticiones válidas vs con fallas.
+   - **Panel Lateral en Vivo:** Métricas en tiempo real de ángulo de rodilla, inclinación del tronco, coeficiente de valgo y sugerencias verbales de corrección NSCA.
+   - **Modo Instantánea (Snapshot):** Captura alternativa mediante la API web del navegador.
+
+2. **📹 Pestaña 2: Análisis de Video**
    - **Carga de Archivo:** Permite subir archivos `.mp4`, `.avi`, `.mov`, `.mkv` o `.webm`.
    - **Sample Stride:** Ajusta el salto de cuadros para optimizar velocidad vs precisión.
    - **Presets de Prueba:** Selector con casos de prueba precargados para testear sin tener video a mano.
    - **Feedback Visual:** Muestra veredicto biomecánico (Técnica Correcta vs Valgo vs Cifosis vs Profundidad), semáforo de confianza cromático, métricas del cuadro crítico y recomendaciones NSCA.
    - **Exportación:** Botón para descargar el reporte completo en formato JSON.
 
-2. **🔬 Pestaña 2: Simulador Cinemático (12 Variables)**
+
+3. **🔬 Pestaña 3: Simulador Cinemático (12 Variables)**
    - Sliders interactivos organizados en tres grupos: Miembros Inferiores, Cadera & Columna, y Tobillos & Dinámica.
    - Evaluación instantánea con desglose de probabilidades por clase.
    - Alerta del **Protocolo de Pausa por Fatiga** si se acumulan 3 o más errores consecutivos.
 
-3. **📊 Pestaña 3: Sesión & Historial**
+4. **📊 Pestaña 4: Sesión & Historial**
    - Métricas acumuladas: total de repeticiones evaluadas, tasa de sentadillas válidas y defectuosas.
    - Gráfico de evolución temporal de profundidad articular e inclinación del tronco con líneas de referencia NSCA.
    - Botón de exportación del historial completo de la sesión en CSV.
 
-4. **🛡️ Pestaña 4: Gobernanza Ética & Model Card**
+5. **🛡️ Pestaña 5: Gobernanza Ética & Model Card**
    - Ficha técnica completa de `RegularizedSmallMLP` (hiperparámetros, métricas en test ciego, latencia).
    - Medidas de privacidad Edge AI (procesamiento volátil en RAM, sin subida a la nube).
    - Calculadora interactiva del Score de Usabilidad SUS (*System Usability Scale*).
 
-5. **⚡ Barra Lateral (Sidebar):**
+6. **⚡ Barra Lateral (Sidebar):**
    - Selector de idioma bilingüe (**Español** / **English**).
    - Botones de acceso rápido para cargar casos de prueba con un solo clic.
    - Monitor de estado del motor de inferencia local.

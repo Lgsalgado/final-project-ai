@@ -13,7 +13,7 @@ Características:
 
 import urllib.request
 from pathlib import Path
-from typing import List, Dict, Optional, Tuple
+from typing import List, Dict, Optional, Tuple, Callable
 import numpy as np
 import cv2
 
@@ -154,6 +154,63 @@ class SquatPoseDetector:
         imputed_coords_4d = self._impute_contralateral(coords_and_vis, prev_landmarks)
         return imputed_coords_4d
 
+    def extract_landmarks_and_screen(
+        self,
+        frame_bgr: np.ndarray,
+        prev_landmarks: Optional[np.ndarray] = None,
+        timestamp_ms: Optional[int] = None
+    ) -> Tuple[Optional[np.ndarray], Optional[List[Tuple[int, int, float]]]]:
+        """
+        Procesa un cuadro BGR y retorna:
+        1. Matriz de forma (33, 4) con [x, y, z, visibilidad] para el motor cinemático.
+        2. Lista de 33 tuplas (x_pixel, y_pixel, visibilidad) para renderizar el esqueleto en pantalla.
+        """
+        import mediapipe as mp
+
+        frame_rgb = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB)
+        mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=frame_rgb)
+
+        if self.running_mode_str == "VIDEO":
+            if timestamp_ms is None:
+                raise ValueError("Se requiere timestamp_ms al usar running_mode='VIDEO'")
+            result = self._landmarker.detect_for_video(mp_image, timestamp_ms)
+        else:
+            result = self._landmarker.detect(mp_image)
+
+        world_lm = None
+        if result.pose_world_landmarks and len(result.pose_world_landmarks) > 0:
+            world_lm = result.pose_world_landmarks[0]
+        elif result.pose_landmarks and len(result.pose_landmarks) > 0:
+            world_lm = result.pose_landmarks[0]
+
+        screen_lm = None
+        if result.pose_landmarks and len(result.pose_landmarks) > 0:
+            screen_lm = result.pose_landmarks[0]
+
+        if not world_lm or len(world_lm) < 33:
+            return None, None
+
+        coords_and_vis = np.zeros((33, 4), dtype=np.float32)
+        for idx in range(33):
+            lm = world_lm[idx]
+            vis = getattr(lm, "visibility", 1.0)
+            coords_and_vis[idx] = [lm.x, lm.y, lm.z, vis]
+
+        imputed_coords_4d = self._impute_contralateral(coords_and_vis, prev_landmarks)
+
+        screen_points = []
+        h, w = frame_bgr.shape[:2]
+        if screen_lm:
+            for idx in range(33):
+                slm = screen_lm[idx]
+                px = max(0, min(w - 1, int(slm.x * w)))
+                py = max(0, min(h - 1, int(slm.y * h)))
+                vis = getattr(slm, "visibility", 1.0)
+                screen_points.append((px, py, vis))
+
+        return imputed_coords_4d, screen_points
+
+
     def _impute_contralateral(
         self,
         coords_and_vis: np.ndarray,
@@ -183,11 +240,13 @@ class SquatPoseDetector:
         self,
         video_path: Path | str,
         sample_stride: int = 1,
-        max_dimension: int = 640
+        max_dimension: int = 640,
+        progress_callback: Optional[Callable[[int, int], None]] = None
     ) -> Tuple[List[np.ndarray], float]:
         """
         Procesa un archivo de video secuencialmente con optimizaciones de velocidad:
         redimensionamiento adaptativo (max_dimension=640) y submuestreo por pasos (sample_stride).
+        Permite emitir avances a través de `progress_callback(processed_frames, total_frames)`.
         """
         video_path = Path(video_path).resolve()
         if not video_path.exists():
@@ -200,6 +259,10 @@ class SquatPoseDetector:
         fps = cap.get(cv2.CAP_PROP_FPS)
         if fps <= 0 or np.isnan(fps):
             fps = 30.0
+
+        total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        if total_frames <= 0:
+            total_frames = 1
 
         effective_fps = float(fps / max(1, sample_stride))
         frames_landmarks: List[np.ndarray] = []
@@ -223,18 +286,29 @@ class SquatPoseDetector:
                 new_h = max(1, int(h * scale))
                 frame = cv2.resize(frame, (new_w, new_h), interpolation=cv2.INTER_AREA)
 
-            timestamp_ms = timestamp_offset_ms + int((frame_idx / fps) * 1000)
+            if self.running_mode_str == "VIDEO":
+                calc_ts = timestamp_offset_ms + int((frame_idx / fps) * 1000)
+                timestamp_ms = max(calc_ts, self._last_timestamp_ms + 1)
+                self._last_timestamp_ms = timestamp_ms
+            else:
+                timestamp_ms = None
+
             lm_4d = self.extract_landmarks(
                 frame,
                 prev_landmarks=last_valid_lm,
-                timestamp_ms=timestamp_ms if self.running_mode_str == "VIDEO" else None
+                timestamp_ms=timestamp_ms
             )
-            if self.running_mode_str == "VIDEO":
-                self._last_timestamp_ms = timestamp_ms
 
             if lm_4d is not None:
                 frames_landmarks.append(lm_4d)
                 last_valid_lm = lm_4d
+
+            if progress_callback and (frame_idx % 10 == 0 or frame_idx == total_frames - 1):
+                try:
+                    progress_callback(frame_idx, total_frames)
+                except Exception:
+                    pass
+
             frame_idx += 1
 
         cap.release()
