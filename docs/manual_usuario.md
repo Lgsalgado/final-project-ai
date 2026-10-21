@@ -229,3 +229,48 @@ R: Indica que el modelo tiene incertidumbre en la clasificación. Se recomienda 
 | 422 | Vector de features invalido | Verificar que los 12 campos esten presentes y sean numericos |
 | 422 | Pose no detectada en video | Asegurar que la persona sea visible de cabeza a pies |
 | 500 | Error interno del servidor | Verificar que los modelos existen en models/ y que el servidor se inicio correctamente |
+
+---
+
+## 7. Interfaz de Usuario Gráfica (Streamlit)
+
+La interfaz web interactiva (`app/app.py`) permite evaluar la técnica biomecánica sin necesidad de interactuar por línea de comandos o cURL.
+
+### 7.1 Iniciar la Aplicación
+
+```bash
+# Desde la raíz del repositorio squat_pose_backend:
+streamlit run app/app.py
+```
+
+La aplicación se abrirá automáticamente en tu navegador web predeterminado en `http://localhost:8501`.
+
+### 7.2 Funcionalidades y Pestañas Principales
+
+1. **📹 Pestaña 1: Análisis de Video**
+   - **Carga de Archivo:** Permite subir archivos `.mp4`, `.avi`, `.mov`, `.mkv` o `.webm`.
+   - **Sample Stride:** Ajusta el salto de cuadros para optimizar velocidad vs precisión.
+   - **Presets de Prueba:** Selector con casos de prueba precargados para testear sin tener video a mano.
+   - **Feedback Visual:** Muestra veredicto biomecánico (Técnica Correcta vs Valgo vs Cifosis vs Profundidad), semáforo de confianza cromático, métricas del cuadro crítico y recomendaciones NSCA.
+   - **Exportación:** Botón para descargar el reporte completo en formato JSON.
+
+2. **🔬 Pestaña 2: Simulador Cinemático (12 Variables)**
+   - Sliders interactivos organizados en tres grupos: Miembros Inferiores, Cadera & Columna, y Tobillos & Dinámica.
+   - Evaluación instantánea con desglose de probabilidades por clase.
+   - Alerta del **Protocolo de Pausa por Fatiga** si se acumulan 3 o más errores consecutivos.
+
+3. **📊 Pestaña 3: Sesión & Historial**
+   - Métricas acumuladas: total de repeticiones evaluadas, tasa de sentadillas válidas y defectuosas.
+   - Gráfico de evolución temporal de profundidad articular e inclinación del tronco con líneas de referencia NSCA.
+   - Botón de exportación del historial completo de la sesión en CSV.
+
+4. **🛡️ Pestaña 4: Gobernanza Ética & Model Card**
+   - Ficha técnica completa de `RegularizedSmallMLP` (hiperparámetros, métricas en test ciego, latencia).
+   - Medidas de privacidad Edge AI (procesamiento volátil en RAM, sin subida a la nube).
+   - Calculadora interactiva del Score de Usabilidad SUS (*System Usability Scale*).
+
+5. **⚡ Barra Lateral (Sidebar):**
+   - Selector de idioma bilingüe (**Español** / **English**).
+   - Botones de acceso rápido para cargar casos de prueba con un solo clic.
+   - Monitor de estado del motor de inferencia local.
+
