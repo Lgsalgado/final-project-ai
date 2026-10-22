@@ -220,14 +220,28 @@ pytest tests/ -v
 
 ## Interfaz de Usuario
 
-La interfaz gráfica interactiva permite:
-- Seleccionar entre ejemplo de cada clase postural (menú desplegable)
-- Ajustar valores de las 12 variables cinemáticas mediante sliders
-- Visualizar la predicción del modelo con barra de confianza (softmax)
-- Cargar un archivo CSV o de video para análisis en lote
-- Exportar el reporte de sesión en formato JSON
+La interfaz gráfica interactiva (`app/app.py`) desarrollada con **Streamlit**, **Plotly** y **PyTorch** permite probar el sistema de manera intuitiva y profesional:
 
-> Ver instrucciones de uso en [`docs/manual_usuario.md`](docs/manual_usuario.md)
+### Iniciar la Interfaz Web
+
+```bash
+# Iniciar la aplicación web interactiva
+streamlit run app/app.py
+```
+
+La aplicación quedará disponible en `http://localhost:8501`.
+
+### Módulos y Capacidades
+
+- **📹 Análisis de Video:** Subida de video (`.mp4`, `.mov`, `.avi`), selector de stride, procesamiento con barra de progreso, cuadro crítico (timestamp y ángulo de máxima flexión), veredicto biomecánico y recomendaciones NSCA.
+- **🔬 Simulador Cinemático (12 Variables):** Ajuste fino de ángulos articulares en 3 paneles funcionales y evaluación instantánea con barras softmax.
+- **📊 Sesión & Historial:** Gráficos de evolución temporal de repeticiones y exportación en CSV.
+- **🛡️ Gobernanza Ética & Model Card:** Ficha técnica completa de `RegularizedSmallMLP`, garantías de privacidad Edge AI (sin subida de video a la nube) y calculadora interactiva del score de usabilidad SUS.
+- **⚡ Presets con 1 Clic:** Botones de carga rápida para casos de *Técnica Correcta*, *Valgo Dinámico*, *Cifosis Lumbar* y *Profundidad Insuficiente*.
+- **🌐 Bilingüe:** Soporte conmutable en Español e Inglés.
+
+> Ver guía detallada con capturas en [`docs/manual_usuario.md`](docs/manual_usuario.md)
+
 
 ---
 
@@ -268,11 +282,17 @@ squat_pose_backend/
 │   ├── scaler.pkl                   # StandardScaler serializado (Joblib)
 │   ├── scaler.pt                    # Parámetros del scaler (formato PyTorch)
 │   ├── pose_landmarker_full.task    # Bundle binario MediaPipe BlazePose
-│   └── README.md                    # Descripción y versionado de artefactos
+├── app/                             # Interfaz de usuario interactiva (Streamlit)
+│   ├── app.py                       # Aplicación principal
+│   ├── requirements.txt             # Dependencias de la interfaz
+│   └── assets/                      # Estilos CSS y casos de prueba precargados
+│       ├── style.css
+│       └── sample_cases.json
 ├── tests/
 │   ├── test_data_processing.py      # Pruebas del motor cinemático y normalización
 │   ├── test_model.py                # Pruebas de arquitectura y forward pass
-│   └── test_api.py                  # Pruebas de endpoints FastAPI
+│   ├── test_api.py                  # Pruebas de endpoints FastAPI
+│   └── test_app.py                  # Pruebas de componentes y lógica de la app
 └── results/
     ├── figures/                     # Gráficos de curvas de aprendizaje (300 DPI)
     ├── metrics/                     # Métricas finales en JSON/CSV
