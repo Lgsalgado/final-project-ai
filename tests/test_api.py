@@ -1,11 +1,7 @@
 """
-Tests del endpoint GET '/' de la API FastAPI.
-Verifica que la ruta existe y retorna status 200 con el campo 'status'.
-Utiliza TestClient de FastAPI sin requerir que el servidor este levantado.
-
-NOTA: Este test no carga los modelos reales (best_model.pth, scaler.pkl, 
-pose_landmarker_full.task). Unicamente verifica que el endpoint raiz
-es accesible y la aplicacion se inicializa correctamente.
+Tests de los endpoints principales de la API FastAPI.
+Verifica la disponibilidad de rutas y esquemas de respuesta sin requerir
+la carga completa de pesos en memoria.
 """
 
 import sys

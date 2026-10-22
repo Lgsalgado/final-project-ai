@@ -5,7 +5,7 @@ Maestría en Inteligencia Artificial (MIAR0545) — UEES
 Autores: Luis Gabriel Salgado Santamaría & Daniel Fernando Salgado Santamaría
 
 Tecnología: Streamlit + streamlit-webrtc + Plotly + PyTorch + MediaPipe BlazePose + OpenCV
-Cumple con la especificación técnica de la Rúbrica Oficial (checklist.pdf):
+Módulos y funcionalidades integradas:
 - Acceso a Cámara Web en Vivo vía WebRTC con validación biomecánica simultánea cuadro a cuadro
 - Ingesta de archivos de video y simulación cinemática (12 variables)
 - Semáforo cromático de confianza e incertidumbre (<70%, 70-84%, >=85%)
@@ -477,7 +477,7 @@ def main():
     </div>
     """, unsafe_allow_html=True)
 
-    # DISCLAIMER ÉTICO PERMANENTE (Mandatorio por workshop.pdf)
+    # Aviso ético y de privacidad
     st.markdown(f"<div class='ethical-disclaimer-banner'>{t['disclaimer']}</div>", unsafe_allow_html=True)
 
     # 5 TABS PRINCIPALES (CON CÁMARA EN VIVO WEBRTC)
