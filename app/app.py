@@ -427,7 +427,7 @@ def main():
 
     # SIDEBAR
     with st.sidebar:
-        st.image("https://img.icons8.com/fluency/96/squats.png", width=70)
+        st.markdown("<div style='font-size: 52px; margin-bottom: 2px;'>🏋️</div>", unsafe_allow_html=True)
         st.markdown("### SquatAI Platform")
         
         # Selector de idioma
