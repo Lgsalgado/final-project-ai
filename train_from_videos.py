@@ -14,8 +14,6 @@ Estrategia:
 Uso:
     python train_from_videos.py
     python train_from_videos.py --videos_dir "C:/ruta/a/videos" --epochs 300
-
-NOTA: NO modifica ninguno de los archivos del directorio src/.
 """
 
 import sys

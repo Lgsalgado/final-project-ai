@@ -4,10 +4,12 @@
 ![PyTorch](https://img.shields.io/badge/PyTorch-2.x-red?logo=pytorch)
 ![MediaPipe](https://img.shields.io/badge/MediaPipe-BlazePose-green)
 ![FastAPI](https://img.shields.io/badge/API-FastAPI-009688?logo=fastapi)
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://proyecto-final-ia-salgado.streamlit.app)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 ![UEES](https://img.shields.io/badge/UEES-MIAR0545-informational)
 
-Sistema de visión por computador monocular con análisis biomecánico en tiempo real para la detección y corrección de errores posturales en ejercicios de fuerza, desplegado en el borde (*Edge AI*) sin requerir conectividad en la nube.
+Sistema de visión por computador monocular con análisis biomecánico en tiempo real para la detección y corrección de errores posturales en ejercicios de fuerza, desplegado en el borde (*Edge AI*) y en la nube pública:  
+🌐 **Demo en Producción:** [proyecto-final-ia-salgado.streamlit.app](https://proyecto-final-ia-salgado.streamlit.app)
 
 ---
 

@@ -1,7 +1,7 @@
 """
 Arquitectura del Modelo de Clasificación (PyTorch)
 =================================================
-Implementación de la red compacta 'RegularizedSmallMLP' validada en la Semana 3:
+Implementación de la red neuronal compacta RegularizedSmallMLP:
   - Topología: 12 features de entrada -> 128 -> 64 -> 32 -> 4 clases de salida.
   - Total de parámetros entrenables: exactamente 12,580 parámetros.
   - Normalización por lotes: BatchNorm1d tras cada transformación lineal.
@@ -111,3 +111,32 @@ class RegularizedSmallMLP(nn.Module):
             "dropout_rate": self.dropout_rate,
             "trainable_parameters": self.count_parameters()
         }
+
+
+class OverfittingMLP(nn.Module):
+    """
+    Modelo Base Inicial Intencionalmente Sobredimensionado (Línea Base).
+    Topología: 12 -> 512 -> 256 -> 128 -> 4 (237,188 parámetros).
+    Sin regularización (sin Dropout, sin BatchNorm, sin decaimiento de peso).
+    Utilizado para diagnosticar la divergencia de sobreajuste frente al Test Set Ciego.
+    """
+
+    def __init__(self, input_dim: int = 12, num_classes: int = 4) -> None:
+        super().__init__()
+        self.input_dim = input_dim
+        self.num_classes = num_classes
+        self.network = nn.Sequential(
+            nn.Linear(input_dim, 512),
+            nn.ReLU(),
+            nn.Linear(512, 256),
+            nn.ReLU(),
+            nn.Linear(256, 128),
+            nn.ReLU(),
+            nn.Linear(128, num_classes)
+        )
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        return self.network(x)
+
+    def count_parameters(self) -> int:
+        return sum(p.numel() for p in self.parameters() if p.requires_grad)

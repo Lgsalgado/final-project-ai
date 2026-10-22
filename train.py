@@ -313,7 +313,7 @@ def main() -> None:
     model = RegularizedSmallMLP(input_dim=12, num_classes=4, dropout_rate=0.35).to(device)
     total_params = model.count_parameters()
     print(f"\nArquitectura: {model.__class__.__name__}")
-    print(f"Parámetros entrenables: {total_params:,} (Estándar Semana 3: 12,580)")
+    print(f"Parámetros entrenables: {total_params:,} (Referencia: 12,580)")
 
     criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
