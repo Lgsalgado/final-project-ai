@@ -282,3 +282,14 @@ La aplicación se abrirá automáticamente en tu navegador web predeterminado en
    - Botones de acceso rápido para cargar casos de prueba con un solo clic.
    - Monitor de estado del motor de inferencia local.
 
+---
+
+## 8. Información de Contacto y Soporte Técnico
+
+Para reporte de incidencias, consultas técnicas sobre la integración de la API o calibración de umbrales biomecánicos:
+- **Autores:** Luis Gabriel Salgado Santamaría & Daniel Fernando Salgado Santamaría
+- **Institución:** Universidad de Especialidades Espíritu Santo (UEES) — Maestría en IA (MIAR0545)
+- **Repositorio:** [github.com/luisgabrielsalgado/squat_pose_backend](https://github.com/luisgabrielsalgado/squat_pose_backend)
+- **Aplicación en Producción:** [proyecto-final-ia-salgado.streamlit.app](https://proyecto-final-ia-salgado.streamlit.app)
+
+
