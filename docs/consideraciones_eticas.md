@@ -123,10 +123,44 @@ El sistema provee explicabilidad en dos niveles:
 
 ---
 
-## 8. Conclusiones Éticas
+## 7. Prevención de Uso Dual y Mal Uso
+
+### ¿Podría el modelo usarse con fines maliciosos?
+El sistema está diseñado estrictamente para el análisis cinemático de sentadillas. Sin embargo, se identifican posibles escenarios de mal uso:
+1. **Vigilancia encubierta o perfilamiento corporal:** Intentar usar la estimación de pose para rastreo no autorizado de personas.
+2. **Evaluación punitiva en entornos laborales o de seguros:** Usar la clasificación automática para denegar cobertura médica o penalizar a trabajadores sin supervisión humana.
+3. **Sobreentrenamiento lesivo (gamificación nociva):** Usuarios que fuercen rangos articulares extremos para "engañar" al modelo y obtener 100% de técnica correcta.
+
+### Salvaguardas implementadas:
+- **Inferencia estrictamente local en CPU (Edge AI):** Sin capacidades de transmisión remota, telemetría oculta ni almacenamiento de secuencias de video.
+- **Desacoplamiento biométrico:** El modelo solo procesa 12 ángulos articulares adimensionales y en grados sexagesimales; no procesa rostros, iris ni identificadores personales.
+- **Licencia y Términos de Uso:** Prohibición explícita de integración en sistemas de vigilancia, diagnóstico clínico automatizado sin médico o evaluación laboral punitiva.
+
+---
+
+## 8. Limitaciones Reconocidas y Casos Límite
+
+### ¿En qué casos NO debe usarse el modelo?
+- **Población con patologías ortopédicas severas preexistentes:** Prótesis de cadera/rodilla, secuelas de fracturas o asimetrías anatómicas congénitas.
+- **Entrenamiento con cargas máximas (1RM):** En levantamientos máximos donde la deformación técnica es momentánea y la cámara puede tener oclusión por múltiples asistentes (*spotters*).
+- **Ejercicios multiarticulares diferentes a sentadillas:** No es aplicable para peso muerto, cargadas olímpicas ni arrancadas.
+
+### Advertencias obligatorias a los usuarios:
+- El sistema es una **herramienta educativa y de asistencia biomecánica**, no un dispositivo médico validado por la FDA/EMA ni el ARCSA.
+- Ninguna métrica del sistema sustituye la evaluación presencial de un fisioterapeuta colegiado o entrenador certificado.
+
+### Casos límite (Edge Cases) donde el modelo pierde confiabilidad:
+- **Iluminación deficiente (< 50 lux):** Pérdida de visibilidad de los puntos clave anatómicos.
+- **Ropa excesivamente holgada:** Ropa que oculte la posición exacta de las crestas ilíacas o articulación de la rodilla.
+- **Perspectiva oblicua extrema (> 30° fuera del plano sagital):** Distorsiona la trigonometría 3D de los ángulos articulares.
+
+---
+
+## 9. Conclusiones Éticas
 
 1. El sistema opera bajo un paradigma de **asistencia, no sustitución** del juicio profesional biomecánico.
 2. La arquitectura **Edge AI** garantiza privacidad absoluta sin comprometer la utilidad del sistema.
 3. Los sesgos identificados son **mitigables** mediante normalización antropométrica y validación cruzada diversificada.
 4. El cumplimiento con **LOPDP Ecuador**, GDPR y regulaciones latinoamericanas está garantizado por diseño arquitectónico.
 5. La **explicabilidad cuantitativa** (ángulos NSCA + probabilidades softmax) satisface los requisitos de transparencia algorítmica para aplicaciones de salud y bienestar.
+

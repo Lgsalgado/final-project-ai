@@ -27,7 +27,24 @@
 
 ---
 
-## 2. Análisis de Stakeholders
+## 2. Alcance del Proyecto (Qué incluye y qué NO incluye)
+
+### Qué INCLUYE el proyecto:
+- **Captura en Tiempo Real y Video:** Supervisión en vivo mediante cámara web (WebRTC) y análisis asíncrono de archivos de video (.mp4, .mov, .avi, .webm).
+- **Estimación de Puntos Clave 3D:** Detección de 33 landmarks tridimensionales con MediaPipe BlazePose Tasks en CPU (*Edge AI*).
+- **Motor Cinemático Vectorial NSCA:** Cálculo de 12 variables biomecánicas (flexión de rodillas, caderas, dorsiflexión, inclinación del tronco, asimetría de rodillas y valgo dinámico).
+- **Clasificación Multiclase:** Diagnóstico en 4 categorías posturales: Técnica Correcta, Valgo Dinámico, Cifosis Lumbar y Profundidad Insuficiente.
+- **Interfaz Interactiva de Usuario:** Aplicación en Streamlit con visualizaciones en Plotly, HUD biomecánico sobre el video, simulador de laboratorio y exportación de reportes JSON/CSV.
+- **Gobernanza Ética y Model Card:** Documentación auditable, mitigación de sesgos antropométricos y privacidad por diseño (*Privacy by Design*).
+
+### Qué NO INCLUYE el proyecto:
+- **Dispositivo Médico / Diagnóstico Clínico:** No prescribe tratamientos médicos, ortopédicos ni rehabilitación física.
+- **Hardware Invasivo:** No requiere sensores corporales inerciales (IMUs) ni marcadores reflectantes.
+- **Almacenamiento en Nube:** No envía ni retiene videos en servidores externos; el cómputo es 100% local para proteger la privacidad.
+
+---
+
+## 3. Análisis de Stakeholders
 
 | Stakeholder | Rol | Beneficios | Riesgos | Poder/Voz | Consideraciones en Diseño |
 |:---|:---|:---|:---|:---:|:---|
@@ -90,3 +107,16 @@
 | H5 | Modelo optimizado validado | RegularizedSmallMLP — Test Acc > 85%, Gap < 0.05 | Semana 3 |
 | H6 | API REST funcional | Endpoints /predict y /predict/video operativos < 100 ms | Semana 4 |
 | H7 | Repositorio completo | Estructura, documentación, tests, notebooks ejecutables | Semana 6 |
+
+---
+
+## 7. Gestión de Riesgos y Mitigación
+
+| # | Riesgo Identificado | Severidad | Probabilidad | Estrategia de Mitigación Implementada |
+|:---:|:---|:---:|:---:|:---|
+| **R1** | **Oclusión física en profundidad máxima** | Alta | Media | Filtro temporal Savitzky-Golay e imputación bilateral contralateral cuando la visibilidad $c_i < 0.60$. |
+| **R2** | **Sobreajuste severo del clasificador** | Alta | Alta | Reducción de parámetros (237k a 12.5k en `RegularizedSmallMLP`), Dropout decreciente (0.35 a 0.14) y Early Stopping. |
+| **R3** | **Latencia excesiva en inferencia** | Media | Media | Procesamiento optimizado en CPU con MediaPipe Tasks y pase forward del MLP en < 1.5 ms (>30 FPS globales). |
+| **R4** | **Fuga de información (Data Leakage)** | Crítica | Baja | Normalización `StandardScaler` ajustada exclusivamente sobre el Train Set y partición por sujeto/video. |
+| **R5** | **Privacidad biométrica del deportista** | Crítica | Baja | Enfoque *Edge AI*: procesamiento en memoria RAM volátil, sin transmisión a servidores ni almacenamiento de video. |
+

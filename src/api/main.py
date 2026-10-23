@@ -228,7 +228,7 @@ async def predict_video(
             probs_matrix = torch.softmax(logits_matrix, dim=1).cpu().numpy()
 
         preds_array = np.argmax(probs_matrix, axis=1)
-        # Quitar la categoria 'Profundidad Insuficiente' (clase 3) mapeandola a Tecnica Correcta
+        # En cuadros de transición la profundidad no se penaliza como falla estructural
         preds_array[preds_array == 3] = 0
 
         depths = [f['squat_depth_deg'] for _, f in frames_data]
@@ -252,7 +252,6 @@ async def predict_video(
         active_preds = preds_array[active_indices]
         total_active = len(active_indices)
         class_counts = {c: int(np.sum(active_preds == c)) for c in range(4)}
-        # Solo se reportan las clases activas (excluyendo Profundidad Insuficiente)
         class_distribution = {
             CLASS_NAMES[c]: round(float(class_counts[c] / total_active) * 100.0, 1)
             for c in [0, 1, 2]
@@ -287,12 +286,10 @@ async def predict_video(
                 "Distribuye el peso simétricamente entre ambas piernas y verifica la colocación equitativa de los pies."
             )
 
-        # 1. El veredicto principal se basa primordialmente en la clasificacion del
-        # cuadro de maxima flexion (cuadro critico / inflexion del squat)
+        # Diagnóstico en el cuadro de máxima flexión articular (punto crítico)
         overall_class_id = crit_class_id
 
-        # 2. Alternativa de validacion: usar la clase mayoritaria durante la fase activa
-        # si el punto critico es 0 pero un defecto predomino consistentemente
+        # Validación por defecto postural dominante en la fase de movimiento
         majority_active_class = int(max(range(4), key=lambda c: class_counts[c]))
         if crit_class_id == 0:
             if majority_active_class != 0 and (class_counts[majority_active_class] / total_active) >= 0.35:
@@ -302,8 +299,7 @@ async def predict_video(
             elif butt_wink_in_active >= 0.35:
                 overall_class_id = 2
 
-        # 4. Regla biomecanica: Si min_knee <= 90.0, el atleta rompio el paralelo;
-        # bajo ninguna circunstancia el diagnostico global puede ser "Profundidad Insuficiente" (clase 3)
+        # Criterio NSCA: flexión de rodilla <= 90° confirma profundidad paralela suficiente
         if min_knee <= 90.0 and overall_class_id == 3:
             if crit_class_id != 3:
                 overall_class_id = crit_class_id
@@ -312,7 +308,7 @@ async def predict_video(
             else:
                 overall_class_id = 0
 
-        # 3. is_correct solo debe ser true si la clase en el punto critico es 0 ("Tecnica Correcta") y overall_class_id == 0
+        # Veredicto de técnica correcta: cuadro crítico y trayectoria articular sin fallas
         is_correct = (crit_class_id == 0 and overall_class_id == 0)
 
         overall_posture = CLASS_NAMES[overall_class_id]
