@@ -9,6 +9,11 @@
 ![UEES](https://img.shields.io/badge/UEES-MIAR0545-informational)
 
 Sistema de visión por computador monocular con análisis biomecánico en tiempo real para la detección y corrección de errores posturales en ejercicios de fuerza, desplegado en el borde (*Edge AI*) y en la nube pública:  
+> [!NOTE]
+> **Disponibilidad de la Demo en Vivo**  
+> Por políticas de ahorro de recursos de Streamlit Cloud, si la aplicación no ha recibido visitas recientes entrará en modo reposo.  
+> Al abrir el enlace, presiona el botón central para despertarla (**"Yes, get this app back up!"**). Tardará menos de un minuto en cargar todo el entorno.
+
 🌐 **Demo en Producción:** [proyecto-final-ia-salgado.streamlit.app](https://proyecto-final-ia-salgado.streamlit.app)
 
 ---
