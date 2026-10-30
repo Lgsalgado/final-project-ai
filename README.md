@@ -14,7 +14,7 @@ Sistema de visión por computador monocular con análisis biomecánico en tiempo
 > Por políticas de ahorro de recursos de Streamlit Cloud, si la aplicación no ha recibido visitas recientes entrará en modo reposo.  
 > Al abrir el enlace, presiona el botón central para despertarla (**"Yes, get this app back up!"**). Tardará menos de un minuto en cargar todo el entorno.
 
->🌐 **Demo en Producción:** [proyecto-final-ia-salgado.streamlit.app](https://proyecto-final-ia-salgado.streamlit.app)  
+>🌐 **Demo en Producción:** [proyecto-final-ia-salgado.streamlit.app](https://final-project-ia.streamlit.app/)  
 >▶️ **Video Pitch:** [pitch-proyecto-final- Youtube](https://youtu.be/yI6lbZ-ibFg)  
 >▶️ **Video Preguntas:** [preguntas-proyecto-final- Youtube](https://youtu.be/rx0Tf29LBug)
 
