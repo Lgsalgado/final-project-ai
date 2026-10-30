@@ -368,7 +368,7 @@ Este proyecto está publicado bajo la [Licencia MIT](LICENSE).
 
 | Entregable | Enlace |
 |---|---|
-| 🎬 **Video Pitch del Proyecto (5 min)** | [Ver en YouTube / Drive](_PENDIENTE_) |
-| 🎙️ **Video Ronda de Preguntas** | [Ver en YouTube / Drive](_PENDIENTE_) |
+| 🎬 **Video Pitch del Proyecto (5 min)** | [Ver en YouTube / Drive](https://youtu.be/yI6lbZ-ibFg) |
+| 🎙️ **Video Ronda de Preguntas** | [Ver en YouTube / Drive](https://youtu.be/rx0Tf29LBug) |
 
 > Los enlaces se actualizarán al momento de la entrega final.
